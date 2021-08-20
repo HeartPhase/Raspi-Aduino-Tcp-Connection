@@ -3,6 +3,7 @@ import cv2
 import numpy
 import threading
 import os, sys
+import time
 
 # import RPi.GPIO
 import serial
@@ -32,7 +33,7 @@ def send_frame(v, s):  ## send the video to target
 
         try:
             s.send(plength.encode('utf-8'))
-            #print(len(img_data))
+            time.sleep(0.035)
             s.send(img_data)
 
         except:
@@ -120,10 +121,11 @@ def brake():
 
 def roatate(angle):
     print('rotate ',str(angle))
-    final='2'+str(angle)
-    all=final.decode("hex")
-    ser.write(all)
+    all='2'+str(angle+4)
+    ser.write('2'.encode('utf-8'))
+    ser.write(str(angle).encode('utf-8'))
     return
+
 
 try:
     if ser.isOpen==False:
@@ -132,3 +134,4 @@ except:
     print('make sure serial is connected')
 threading.Thread(target=send_frame, args=(video, sock,)).start()
 threading.Thread(target=recieve_comm, args=(sock,)).start()
+
